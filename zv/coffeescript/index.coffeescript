@@ -1,0 +1,68 @@
+h = ~~(Math.random() * 360)
+s = 50
+l = 50
+lock = off
+    
+draw = () ->
+  if lock is off
+    $('b').hide()
+    hsl = new d3.hsl h, s / 100.0, l / 100.0
+    hcl = new d3.hcl hsl
+    rgb = new d3.rgb hsl
+    lab = new d3.lab hsl
+    $('span').html ""
+    $('span').append hsl.toString()
+    $('span').append "<br /> rgb(#{rgb.r}, #{rgb.g}, #{rgb.b})"
+    $('span').append "<br /> hsl(#{h}, #{s}%, #{l}%)"
+    $('span').append "<br /> hcl(#{(~~hcl.h + 360) % 360}, #{hcl.c.toFixed(2)}%, #{hcl.l.toFixed(2)}%)"
+    $('span').append "<br /> lab(#{lab.l.toFixed(0)}, #{lab.a.toFixed(0)}, #{lab.b.toFixed(0)})"
+    $('body').css "background-color", "hsl(#{h}, #{s}%, #{l}%)"
+    $('body').css "color", "rgb(#{Math.min(rgb.r + 96, 255)}, #{Math.min(rgb.g + 96, 255)}, #{Math.min(rgb.b + 96, 255)})"
+  else
+    $('b').show()
+
+
+$(window).mousemove (e) ->
+  maxX = window.innerWidth
+  maxY = window.innerHeight
+  x = e.pageX
+  y = e.pageY
+  h = ~~(x / maxX * 360)
+  l = ~~(y / maxY * 10000) / 100
+  draw()
+  return
+    
+$('body').bind "mousewheel", (e) ->
+  delta = e.wheelDelta / 120 if e.wheelDelta
+  delta = -e.details if e.details
+  delta = e.originalEvent.wheelDelta / 120 if e.originalEvent.wheelDelta
+  delta = -e.originalEvent.details if e.originalEvent.details
+  s = Math.max(0, Math.min(100, s + delta * 5))
+  draw()
+  return
+    
+$('b').click () ->
+  lock = off
+
+$(window).click () ->
+  lock = on
+
+$(window).dblclick () ->
+  lock = off
+  
+$('b').mouseenter () ->
+  $('b').html '🔓'
+
+$('b').mouseleave () ->
+  $('b').html '🔒'
+    
+hash = if location.hash.indexOf('(') > 0 then location.hash.substr(1) else location.hash
+if hash.length > 0
+  hsl = new d3.hsl hash
+  h = hsl.h
+  s = hsl.s * 100
+  l = hsl.l * 100
+  draw()
+  lock = on
+else
+  draw()
