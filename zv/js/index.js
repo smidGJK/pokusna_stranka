@@ -1,7 +1,7 @@
 (function() {
   var draw, h, hash, hsl, l, lock, s, r, g, b, p;
 
-  h = ~~(Math.random() * 360);
+  h = 0;
 
   s = 100;
 
