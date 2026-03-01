@@ -63,7 +63,7 @@ function initGyro() {
 
   let smoothH = 0;
   let smoothS = 1;
-  let smoothL = 0.5;
+  let smoothL = 1;
 
   window.addEventListener("deviceorientation", (event) => {
 
@@ -75,15 +75,15 @@ function initGyro() {
     // Normalizace
     let targetH = rotate || 0; // 0–360
     let targetS = normalize(leftRight, -90, 90);
-    let targetL = normalize(frontBack, -180, 180);
+    //let targetL = normalize(frontBack, -180, 180);
 
     // Jemné vyhlazení (interpolace)
     smoothH += (targetH - smoothH) * 0.05;
     smoothS += (targetS - smoothS) * 0.05;
-    smoothL += (targetL - smoothL) * 0.05;
+    //smoothL += (targetL - smoothL) * 0.05;
 
     document.body.style.background =
-      `hsl(${smoothH}, ${smoothS * 100}%, ${smoothL * 100}%)`;
+      `hsl(${smoothH}, ${smoothS * 100}%, 100%)`;
   });
 }
 
