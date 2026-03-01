@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HSL časové světlo</title>
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: hsl(0, 100%, 100%);
+    overflow: hidden;
+  }
+</style>
+</head>
+
+<body>
+
+<script>
+const period = 3000; // 3 sekundy (v ms)
+
+function animate() {
+  const now = performance.now(); // čas od načtení stránky
+  const progress = (now % period) / period; // 0–1
+  const hue = progress * 360; // 0–360°
+
+  document.body.style.background =
+    `hsl(${hue}, 100%, 100%)`;
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
