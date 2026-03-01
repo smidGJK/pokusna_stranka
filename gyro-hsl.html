@@ -63,7 +63,7 @@ function initGyro() {
 
   let smoothH = 0;
   let smoothS = 1;
-  let smoothL = 1;
+  let smoothL = 0.5;
 
   window.addEventListener("deviceorientation", (event) => {
 
@@ -83,7 +83,7 @@ function initGyro() {
     //smoothL += (targetL - smoothL) * 0.05;
 
     document.body.style.background =
-      `hsl(${smoothH}, ${smoothS * 100}%, 100%)`;
+      `hsl(${smoothH}, ${smoothS * 100}%, 50%)`;
   });
 }
 
