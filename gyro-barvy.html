@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gyro RGB</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
+    transition: background-color 0.1s linear;
+  }
+  #info {
+    background: rgba(0,0,0,0.4);
+    padding: 20px;
+    border-radius: 10px;
+  }
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div id="info">
+  <h2>Gyroskopické RGB ovládání</h2>
+  <p>Nakláněj telefon a sleduj změnu barvy</p>
+  <p id="values">R: 0 | G: 0 | B: 0</p>
+  <button onclick="requestAccess()">Povolit gyroskop (iPhone)</button>
+</div>
+
+<script>
+function normalize(value, min, max) {
+  return Math.min(Math.max((value - min) / (max - min), 0), 1);
+}
+
+function requestAccess() {
+  if (typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function") {
+    DeviceOrientationEvent.requestPermission()
+      .then(permissionState => {
+        if (permissionState === "granted") {
+          startListening();
+        } else {
+          alert("Přístup zamítnut.");
+        }
+      })
+      .catch(console.error);
+  } else {
+    startListening();
+  }
+}
+
+function startListening() {
+  window.addEventListener("deviceorientation", function(event) {
+    let leftRight = event.gamma;   // -90 až 90 (červená)
+    let frontBack = event.beta;    // -180 až 180 (modrá)
+    let rotate = event.alpha;      // 0 až 360 (zelená)
+
+    // Normalizace na 0–255
+    let r = Math.floor(normalize(leftRight, -90, 90) * 255);
+    let b = Math.floor(normalize(frontBack, -180, 180) * 255);
+    let g = Math.floor(normalize(rotate, 0, 360) * 255);
+
+    document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+
+    document.getElementById("values").innerText =
+      `R: ${r} | G: ${g} | B: ${b}`;
+  });
+}
+</script>
+
+</body>
+</html>
