@@ -9,29 +9,77 @@
   body {
     margin: 0;
     height: 100vh;
-    background: hsl(0, 100%, 100%);
+    background: hsl(0, 100%, 50%);
     overflow: hidden;
+  }
+
+  #panel {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+    padding: 12px 18px;
+    border-radius: 12px;
+    transition: opacity 0.3s ease;
+  }
+
+  #panel.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  button {
+    padding: 8px 14px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
   }
 </style>
 </head>
 
 <body>
 
+<div id="panel">
+  <button id="fsBtn">Na celou obrazovku</button>
+</div>
+
 <script>
-const period = 3000; // 3 sekundy (v ms)
+const panel = document.getElementById("panel");
+const fsBtn = document.getElementById("fsBtn");
+
+const period = 3000; // 3 sekundy
 
 function animate() {
-  const now = performance.now(); // čas od načtení stránky
-  const progress = (now % period) / period; // 0–1
-  const hue = progress * 360; // 0–360°
+  const now = performance.now();
+  const progress = (now % period) / period;
+  const hue = progress * 360;
 
   document.body.style.background =
-    `hsl(${hue}, 100%, 100%)`;
+    `hsl(${hue}, 100%, 50%)`;
 
   requestAnimationFrame(animate);
 }
 
 animate();
+
+fsBtn.addEventListener("click", () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(()=>{});
+    panel.classList.add("hidden");
+  } else {
+    document.exitFullscreen();
+    panel.classList.remove("hidden");
+  }
+});
+
+document.body.addEventListener("click", () => {
+  if (document.fullscreenElement) {
+    panel.classList.remove("hidden");
+  }
+});
 </script>
 
 </body>
