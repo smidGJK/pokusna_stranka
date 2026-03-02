@@ -3,19 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nekonečná prohlídka obrazu</title>
+<title>Fyzický posun obrazu</title>
 
 <style>
   body {
     margin: 0;
-    height: 100vh;
     overflow: hidden;
-    background-image: url("kantori_20_21.png"); /* nahraď vlastním obrázkem */
-    background-repeat: repeat;
-    /*background-size: 800px 800px; virtuální velikost dlaždice */
-    scale: 3;
-    background-position: 0px 0px;
-    transition: background-position 0.05s linear;
+    height: 100vh;
+    background: black;
+  }
+
+  #world {
+    position: absolute;
+    width: 1023px;
+    height: 723px;
+    background-image: url("kantori_20_21.png"); /* nahraď */
+    background-size: cover;
   }
 
   #panel {
@@ -24,7 +27,6 @@
     left: 50%;
     transform: translateX(-50%);
     background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(5px);
     padding: 10px 16px;
     border-radius: 12px;
     display: flex;
@@ -49,70 +51,77 @@
 
 <body>
 
+<div id="world"></div>
+
 <div id="panel">
-  <button id="gyroBtn">Aktivovat gyroskop</button>
-  <button id="calBtn">Kalibrace</button>
+  <button id="motionBtn">Aktivovat pohyb</button>
   <button id="fsBtn">Na celou obrazovku</button>
 </div>
 
 <script>
+const world = document.getElementById("world");
 const panel = document.getElementById("panel");
-const gyroBtn = document.getElementById("gyroBtn");
-const calBtn = document.getElementById("calBtn");
+const motionBtn = document.getElementById("motionBtn");
 const fsBtn = document.getElementById("fsBtn");
 
-let baseGamma = 0;
-let baseBeta = 0;
-let offsetX = 0;
-let offsetY = 0;
-let gyroActive = false;
+let posX = 0;
+let posY = 0;
+let velX = 0;
+let velY = 0;
 
-function initGyro() {
-  if (gyroActive) return;
-  gyroActive = true;
+const friction = 0.92;
+const sensitivity = 0.5;
+const deadZone = 0.1;
 
-  window.addEventListener("deviceorientation", (event) => {
+function update() {
+  velX *= friction;
+  velY *= friction;
 
-    if (event.gamma === null) return;
+  posX += velX;
+  posY += velY;
 
-    const gamma = event.gamma - baseGamma; // vlevo/vpravo
-    const beta = event.beta - baseBeta;    // nahoru/dolů
+  // omezení na hranice obrázku
+  const maxX = window.innerWidth - 1023;
+  const maxY = window.innerHeight - 723;
 
-    // citlivost (větší číslo = pomalejší pohyb)
-    const sensitivity = 5;
+  posX = Math.min(0, Math.max(maxX, posX));
+  posY = Math.min(0, Math.max(maxY, posY));
 
-    offsetX += gamma / sensitivity;
-    offsetY += beta / sensitivity;
+  world.style.transform = `translate(${posX}px, ${posY}px)`;
 
-    document.body.style.backgroundPosition =
-      `${offsetX}px ${offsetY}px`;
+  requestAnimationFrame(update);
+}
+
+function initMotion() {
+  window.addEventListener("devicemotion", (event) => {
+
+    let ax = event.acceleration.x || 0;
+    let ay = event.acceleration.y || 0;
+
+    if (Math.abs(ax) < deadZone) ax = 0;
+    if (Math.abs(ay) < deadZone) ay = 0;
+
+    velX += ax * sensitivity;
+    velY -= ay * sensitivity; // obrácení osy
   });
 }
 
-gyroBtn.addEventListener("click", () => {
+motionBtn.addEventListener("click", () => {
 
-  if (typeof DeviceOrientationEvent !== "undefined" &&
-      typeof DeviceOrientationEvent.requestPermission === "function") {
+  if (typeof DeviceMotionEvent !== "undefined" &&
+      typeof DeviceMotionEvent.requestPermission === "function") {
 
-    DeviceOrientationEvent.requestPermission()
+    DeviceMotionEvent.requestPermission()
       .then(response => {
         if (response === "granted") {
-          initGyro();
+          initMotion();
         }
       })
       .catch(console.error);
 
   } else {
-    initGyro();
+    initMotion();
   }
-});
-
-calBtn.addEventListener("click", () => {
-  window.addEventListener("deviceorientation", function setBase(event) {
-    baseGamma = event.gamma || 0;
-    baseBeta = event.beta || 0;
-    window.removeEventListener("deviceorientation", setBase);
-  });
 });
 
 fsBtn.addEventListener("click", () => {
@@ -130,6 +139,8 @@ document.body.addEventListener("click", () => {
     panel.classList.remove("hidden");
   }
 });
+
+update();
 </script>
 
 </body>
