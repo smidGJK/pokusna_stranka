@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nekonečná prohlídka obrazu</title>
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    background-image: url("https://picsum.photos/800"); /* nahraď vlastním obrázkem */
+    background-repeat: repeat;
+    background-size: 800px 800px; /* virtuální velikost dlaždice */
+    background-position: 0px 0px;
+    transition: background-position 0.05s linear;
+  }
+
+  #panel {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+    padding: 10px 16px;
+    border-radius: 12px;
+    display: flex;
+    gap: 10px;
+    color: white;
+    font-family: Arial, sans-serif;
+  }
+
+  button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  #panel.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>
+</head>
+
+<body>
+
+<div id="panel">
+  <button id="gyroBtn">Aktivovat gyroskop</button>
+  <button id="calBtn">Kalibrace</button>
+  <button id="fsBtn">Na celou obrazovku</button>
+</div>
+
+<script>
+const panel = document.getElementById("panel");
+const gyroBtn = document.getElementById("gyroBtn");
+const calBtn = document.getElementById("calBtn");
+const fsBtn = document.getElementById("fsBtn");
+
+let baseGamma = 0;
+let baseBeta = 0;
+let offsetX = 0;
+let offsetY = 0;
+let gyroActive = false;
+
+function initGyro() {
+  if (gyroActive) return;
+  gyroActive = true;
+
+  window.addEventListener("deviceorientation", (event) => {
+
+    if (event.gamma === null) return;
+
+    const gamma = event.gamma - baseGamma; // vlevo/vpravo
+    const beta = event.beta - baseBeta;    // nahoru/dolů
+
+    // citlivost (větší číslo = pomalejší pohyb)
+    const sensitivity = 5;
+
+    offsetX += gamma / sensitivity;
+    offsetY += beta / sensitivity;
+
+    document.body.style.backgroundPosition =
+      `${offsetX}px ${offsetY}px`;
+  });
+}
+
+gyroBtn.addEventListener("click", () => {
+
+  if (typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function") {
+
+    DeviceOrientationEvent.requestPermission()
+      .then(response => {
+        if (response === "granted") {
+          initGyro();
+        }
+      })
+      .catch(console.error);
+
+  } else {
+    initGyro();
+  }
+});
+
+calBtn.addEventListener("click", () => {
+  window.addEventListener("deviceorientation", function setBase(event) {
+    baseGamma = event.gamma || 0;
+    baseBeta = event.beta || 0;
+    window.removeEventListener("deviceorientation", setBase);
+  });
+});
+
+fsBtn.addEventListener("click", () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(()=>{});
+    panel.classList.add("hidden");
+  } else {
+    document.exitFullscreen();
+    panel.classList.remove("hidden");
+  }
+});
+
+document.body.addEventListener("click", () => {
+  if (document.fullscreenElement) {
+    panel.classList.remove("hidden");
+  }
+});
+</script>
+
+</body>
+</html>
