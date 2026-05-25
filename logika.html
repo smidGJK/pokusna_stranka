@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Úvod do logiky s opakováním matematiky</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --neutral-light: #ecf0f1;
+            --text-dark: #2c3e50;
+            --text-light: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            margin: 25px 0 15px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .instruction {
+            background-color: #e8f4f8;
+            border-left: 5px solid var(--accent-color);
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 0 4px 4px 0;
+            font-size: 15px;
+        }
+
+        /* Aktivita 1 - Stylování */
+        .card-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .card-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .statement-card {
+            background: var(--neutral-light);
+            border-radius: 8px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .statement-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        .statement-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            min-height: 48px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .btn-vyrok { background-color: #d2d7d9; color: var(--text-dark); }
+        .btn-nevyrok { background-color: #d2d7d9; color: var(--text-dark); }
+        
+        .btn-vyrok.active { background-color: var(--primary-color); color: white; }
+        .btn-nevyrok.active { background-color: var(--primary-color); color: white; }
+
+        .btn-true { background-color: #cbdadb; color: #27ae60; display: none; }
+        .btn-false { background-color: #ebdcdb; color: #c0392b; display: none; }
+
+        .btn-true.active { background-color: var(--success-color); color: white; }
+        .btn-false.active { background-color: var(--danger-color); color: white; }
+
+        .feedback {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            min-height: 22px;
+        }
+
+        /* Aktivita 2 - Tabulka */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 15px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: white;
+            font-weight: bold;
+        }
+
+        .proof-btn {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 6px 12px;
+            font-size: 13px;
+            width: auto;
+            display: inline-block;
+        }
+
+        .proof-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .proof-text {
+            display: none;
+            margin-top: 8px;
+            padding: 8px;
+            background-color: #f1f9f5;
+            border-left: 3px solid var(--success-color);
+            font-size: 13.5px;
+        }
+
+        .score-board {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Úvodní hodina: Logika a opakování 1. ročníku</h1>
+        <p>„Říkej to přesně, aneb Matematický detektiv“</p>
+    </header>
+
+    <!-- AKTIVITA 1 -->
+    <h2>1. Úvodní aktivita: Co je a co není výrok?</h2>
+    <div class="instruction">
+        <strong>Rozhodni o každé větě:</strong> Je to výrok (oznamovací věta, u které má smysl posuzovat pravdivost)? Pokud ano, urči kliknutím jeho pravdivostní hodnotu.
+    </div>
+
+    <div class="card-container">
+        <!-- Věta A -->
+        <div class="statement-card" id="card-a">
+            <div class="statement-text">A: „Číslo 17 je prvočíslo.“</div>
+            <div class="btn-group">
+                <button class="btn-vyrok" onclick="selectType('a', true)">Je výrok</button>
+                <button class="btn-nevyrok" onclick="selectType('a', false)">Není výrok</button>
+            </div>
+            <div class="btn-group">
+                <button class="btn-true" id="true-a" onclick="selectTruth('a', 1)">Pravda (1)</button>
+                <button class="btn-false" id="false-a" onclick="selectTruth('a', 0)">Nepravda (0)</button>
+            </div>
+            <div class="feedback" id="feedback-a"></div>
+        </div>
+
+        <!-- Věta B -->
+        <div class="statement-card" id="card-b">
+            <div class="statement-text">B: „Kéž by zítra neodpadla matematika.“</div>
+            <div class="btn-group">
+                <button class="btn-vyrok" onclick="selectType('b', true)">Je výrok</button>
+                <button class="btn-nevyrok" onclick="selectType('b', false)">Není výrok</button>
+            </div>
+            <div class="feedback" id="feedback-b"></div>
+        </div>
+
+        <!-- Věta C -->
+        <div class="statement-card" id="card-c">
+            <div class="statement-text">C: „Každá kvadratická rovnice má v reálných číslech dvě řešení.“</div>
+            <div class="btn-group">
+                <button class="btn-vyrok" onclick="selectType('c', true)">Je výrok</button>
+                <button class="btn-nevyrok" onclick="selectType('c', false)">Není výrok</button>
+            </div>
+            <div class="btn-group">
+                <button class="btn-true" id="true-c" onclick="selectTruth('c', 1)">Pravda (1)</button>
+                <button class="btn-false" id="false-c" onclick="selectTruth('c', 0)">Nepravda (0)</button>
+            </div>
+            <div class="feedback" id="feedback-c"></div>
+        </div>
+
+        <!-- Věta D -->
+        <div class="statement-card" id="card-d">
+            <div class="statement-text">D: „Otoč list na stranu 42!“</div>
+            <div class="btn-group">
+                <button class="btn-vyrok" onclick="selectType('d', true)">Je výrok</button>
+                <button class="btn-nevyrok" onclick="selectType('d', false)">Není výrok</button>
+            </div>
+            <div class="feedback" id="feedback-d"></div>
+        </div>
+
+        <!-- Věta E -->
+        <div class="statement-card" id="card-e">
+            <div class="statement-text">E: „x + 3 = 5“</div>
+            <div class="btn-group">
+                <button class="btn-vyrok" onclick="selectType('e', true)">Je výrok</button>
+                <button class="btn-nevyrok" onclick="selectType('e', false)">Není výrok</button>
+            </div>
+            <div class="feedback" id="feedback-e"></div>
+        </div>
+    </div>
+
+
+    <!-- AKTIVITA 2 -->
+    <h2>2. Hlavní aktivita: Hledání matematických lží</h2>
+    <div class="instruction">
+        <strong>Detektivní práce:</strong> Urči pravdivostní hodnotu následujících matematických výroků a následně si zkontroluj zdůvodnění (opakování učiva).
+    </div>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 50%;">Tvrzení (Výrok)</th>
+                    <th style="width: 25%;">Pravdivostní hodnota</th>
+                    <th style="width: 25%;">Důkaz / Vysvětlení</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Řádek 1 -->
+                <tr>
+                    <td>„Číslo &pi; patří do množiny racionálních čísel.“</td>
+                    <td>
+                        <select onchange="checkTableTruth(this, '0')">
+                            <option value="">Vyber...</option>
+                            <option value="1">Pravda (1)</option>
+                            <option value="0">Nepravda (0)</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="proof-btn" onclick="toggleProof(this)">Zobrazit zdůvodnění</button>
+                        <div class="proof-text"><strong>Správně: Nepravda (0).</strong> &pi; je iracionální číslo. Nelze ho vyjádřit jako podíl dvou celých čísel (zlomek). Má nekonečný neperiodický rozvoj.</div>
+                    </td>
+                </tr>
+                <!-- Řádek 2 -->
+                <tr>
+                    <td>„Grafem funkce y = 2x - 1 je přímka.“</td>
+                    <td>
+                        <select onchange="checkTableTruth(this, '1')">
+                            <option value="">Vyber...</option>
+                            <option value="1">Pravda (1)</option>
+                            <option value="0">Nepravda (0)</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="proof-btn" onclick="toggleProof(this)">Zobrazit zdůvodnění</button>
+                        <div class="proof-text"><strong>Správně: Pravda (1).</strong> Jde o lineární funkci (rovnice tvaru y = kx + q). Grafem každé lineární funkce je přímka.</div>
+                    </td>
+                </tr>
+                <!-- Řádek 3 -->
+                <tr>
+                    <td>„Pro každé reálné číslo <em>a</em> platí &radic;(a<sup>2</sup>) = a.“</td>
+                    <td>
+                        <select onchange="checkTableTruth(this, '0')">
+                            <option value="">Vyber...</option>
+                            <option value="1">Pravda (1)</option>
+                            <option value="0">Nepravda (0)</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="proof-btn" onclick="toggleProof(this)">Zobrazit zdůvodnění</button>
+                        <div class="proof-text"><strong>Správně: Nepravda (0).</strong> Pozor na chyták s absolutní hodnotou! Pokud a = -5, pak &radic;((-5)<sup>2</sup>) = &radic;(25) = 5. Správný obecný vztah je &radic;(a<sup>2</sup>) = |a|.</div>
+                    </td>
+                </tr>
+                <!-- Řádek 4 -->
+                <tr>
+                    <td>„Interval (-3; 2&gt; obsahuje právě 5 celých čísel.“</td>
+                    <td>
+                        <select onchange="checkTableTruth(this, '1')">
+                            <option value="">Vyber...</option>
+                            <option value="1">Pravda (1)</option>
+                            <option value="0">Nepravda (0)</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="proof-btn" onclick="toggleProof(this)">Zobrazit zdůvodnění</button>
+                        <div class="proof-text"><strong>Správně: Pravda (1).</strong> Interval je zleva otevřený (-3 tam nepatří) a zprava uzavřený (2 tam patří). Celá čísla uvnitř jsou: -2, -1, 0, 1, 2. Celkem je jich přesně 5.</div>
+                    </td>
+                </tr>
+                <!-- Řádek 5 -->
+                <tr>
+                    <td>„Množina řešení rovnice x<sup>2</sup> + 4 = 0 v oboru R je prázdná.“</td>
+                    <td>
+                        <select onchange="checkTableTruth(this, '1')">
+                            <option value="">Vyber...</option>
+                            <option value="1">Pravda (1)</option>
+                            <option value="0">Nepravda (0)</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="proof-btn" onclick="toggleProof(this)">Zobrazit zdůvodnění</button>
+                        <div class="proof-text"><strong>Správně: Pravda (1).</strong> Rovnici lze upravit na x<sup>2</sup> = -4. Druhá mocnina jakéhokoliv reálného čísla je vždy nezáporná (&ge; 0), proto rovnice nemá v reálných číslech řešení. K = &empty;.</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="score-board" id="score-display">
+        Matematický detektiv v akci! Vyhodnocujte úlohy.
+    </div>
+</div>
+
+<script>
+    // Správné odpovědi pro Aktivitu 1
+    const correctAnswers = {
+        a: { isVyrok: true, truth: 1, feedback: "Správně! Je to oznamovací věta a je pravdivá (1). Opakováním je definice prvočísla." },
+        b: { isVyrok: false, feedback: "Správně! Není to výrok. Je to věta přací (Kéž by...), u té nemá smysl určovat pravdivost." },
+        c: { isVyrok: true, truth: 0, feedback: "Správně! Je to výrok, ale nepravdivý (0). Kvadratická rovnice může mít v R dvě, jedno (při D=0), nebo žádné řešení (při D<0)." },
+        d: { isVyrok: false, feedback: "Správně! Není to výrok. Jde o rozkazovací větu." },
+        e: { isVyrok: false, feedback: "Správně! Není to výrok. Je to tzv. 'výroková forma'. Dokud nevíme, co je 'x', nemůžeme o pravdivosti rozhodnout." }
+    };
+
+    let pointsAct1 = {};
+    let pointsAct2 = {};
+
+    function updateScore() {
+        let p1 = Object.values(pointsAct1).filter(v => v === true).length;
+        let p2 = Object.values(pointsAct2).filter(v => v === true).length;
+        let total = p1 + p2;
+        
+        const scoreDisplay = document.getElementById('score-display');
+        scoreDisplay.innerHTML = `Tvoje úspěšnost: ${total} / 10 správných rozhodnutí!`;
+        
+        if(total === 10) {
+            scoreDisplay.style.backgroundColor = '#2ecc71';
+            scoreDisplay.innerHTML += " 🌟 Skvělá práce, matematický logik!";
+        } else if (total >= 7) {
+            scoreDisplay.style.backgroundColor = '#3498db';
+        }
+    }
+
+    // Funkce pro Aktivitu 1
+    function selectType(id, userIsVyrok) {
+        const card = document.getElementById(`card-${id}`);
+        const btnVyrok = card.querySelector('.btn-vyrok');
+        const btnNevyrok = card.querySelector('.btn-nevyrok');
+        const trueBtn = document.getElementById(`true-${id}`);
+        const falseBtn = document.getElementById(`false-${id}`);
+        const feedback = document.getElementById(`feedback-${id}`);
+
+        // Reset styling pro typ
+        btnVyrok.classList.remove('active');
+        btnNevyrok.classList.remove('active');
+
+        if(userIsVyrok) {
+            btnVyrok.classList.add('active');
+        } else {
+            btnNevyrok.classList.add('active');
+        }
+
+        const correct = correctAnswers[id];
+
+        if (userIsVyrok === correct.isVyrok) {
+            if (correct.isVyrok) {
+                // Je to výrok, ukaž tlačítka pravdivosti
+                trueBtn.style.display = 'inline-block';
+                falseBtn.style.display = 'inline-block';
+                feedback.innerText = "Správně, je to výrok! Teď urči, zda je pravdivý (1) nebo nepravdivý (0).";
+                feedback.style.color = '#3498db';
+                pointsAct1[id + '_type'] = true;
+            } else {
+                // Není to výrok a uživatel to trefil
+                feedback.innerText = correct.feedback;
+                feedback.style.color = '#2ecc71';
+                pointsAct1[id + '_type'] = true;
+                pointsAct1[id + '_truth'] = true; // u nevýroků netřeba řešit pravdu
+                if(trueBtn) { trueBtn.style.display = 'none'; falseBtn.style.display = 'none'; }
+            }
+        } else {
+            feedback.innerText = userIsVyrok ? "Chyba. Tohle není oznamovací věta nebo obsahuje neznámou proměnnou." : "Chyba. O této větě můžeme jednoznačně říct, zda platí, nebo lže.";
+            feedback.style.color = '#e74c3c';
+            pointsAct1[id + '_type'] = false;
+            pointsAct1[id + '_truth'] = false;
+            if(trueBtn) { trueBtn.style.display = 'none'; falseBtn.style.display = 'none'; }
+        }
+        updateScore();
+    }
+
+    function selectTruth(id, userTruth) {
+        const trueBtn = document.getElementById(`true-${id}`);
+        const falseBtn = document.getElementById(`false-${id}`);
+        const feedback = document.getElementById(`feedback-${id}`);
+        
+        trueBtn.classList.remove('active');
+        falseBtn.classList.remove('active');
+
+        if(userTruth === 1) trueBtn.classList.add('active');
+        else falseBtn.classList.add('active');
+
+        const correct = correctAnswers[id];
+
+        if (userTruth === correct.truth) {
+            feedback.innerText = correct.feedback;
+            feedback.style.color = '#2ecc71';
+            pointsAct1[id + '_truth'] = true;
+        } else {
+            feedback.innerText = "Pravdivostní hodnota není správně. Zamysli se nad matematickou definicí.";
+            feedback.style.color = '#e74c3c';
+            pointsAct1[id + '_truth'] = false;
+        }
+        updateScore();
+    }
+
+    // Funkce pro Aktivitu 2
+    function checkTableTruth(selectElement, correctAnswer) {
+        const row = selectElement.closest('tr');
+        const cell = selectElement.parentElement;
+        
+        if (selectElement.value === correctAnswer) {
+            cell.style.backgroundColor = '#e8f8f0';
+            selectElement.style.borderColor = '#2ecc71';
+            pointsAct2[row.rowIndex] = true;
+        } else if (selectElement.value === "") {
+            cell.style.backgroundColor = 'transparent';
+            selectElement.style.borderColor = '#ccc';
+            pointsAct2[row.rowIndex] = false;
+        } else {
+            cell.style.backgroundColor = '#fdedec';
+            selectElement.style.borderColor = '#e74c3c';
+            pointsAct2[row.rowIndex] = false;
+        }
+        updateScore();
+    }
+
+    function toggleProof(btn) {
+        const proofText = btn.nextElementSibling;
+        if (proofText.style.display === 'block') {
+            proofText.style.display = 'none';
+            btn.innerText = 'Zobrazit zdůvodnění';
+        } else {
+            proofText.style.display = 'block';
+            btn.innerText = 'Skrýt zdůvodnění';
+        }
+    }
+</script>
+
+</body>
+</html>
