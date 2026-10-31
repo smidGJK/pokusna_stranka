@@ -14,6 +14,7 @@ import {
   Bus,
   Sparkles,
   Info,
+  Download,
 } from 'lucide-react';
 
 interface Props {
@@ -217,13 +218,25 @@ export const RouteEditor: React.FC<Props> = ({ initialConfig, onConfirm }) => {
             </div>
           </div>
 
-          <button
-            onClick={handleStart}
-            className="px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 text-base"
-          >
-            <Play className="w-5 h-5 fill-current" />
-            <span>Spustit simulátor (Zobrazit panel)</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <a
+              href="/pid-panel.html"
+              download="pid-iniciator-panel.html"
+              className="px-4 py-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 hover:text-white font-bold rounded-xl shadow flex items-center justify-center gap-2 transition-all text-sm"
+              title="Stáhnout jako jeden samostatný HTML soubor, který lze spustit dvojklikem bez jakéhokoliv serveru"
+            >
+              <Download className="w-4 h-4 text-emerald-400" />
+              <span>Stáhnout offline soubor (.html)</span>
+            </a>
+
+            <button
+              onClick={handleStart}
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5 active:translate-y-0 text-sm sm:text-base cursor-pointer"
+            >
+              <Play className="w-5 h-5 fill-current" />
+              <span>Spustit simulátor</span>
+            </button>
+          </div>
         </div>
 
         {/* Presets Selector */}

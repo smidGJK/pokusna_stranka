@@ -1,0 +1,37 @@
+====================================================================
+  PID INFORMAČNÍ LCD PANEL - NÁVOD KE SPUŠTĚNÍ
+====================================================================
+
+Tato aplikace je 100% klientská (běží čistě v prohlížeči, nevyžaduje 
+žádný server, žádnou databázi ani připojení k internetu).
+
+--------------------------------------------------------------------
+MOŽNOST 1: NEJSNADNĚJŠÍ SPUŠTĚNÍ (DVOJKLIKEM, BEZ INSTALACE)
+--------------------------------------------------------------------
+Stačí otevřít soubor:
+  
+  📂 public/pid-panel.html
+  (nebo dist/index.html)
+
+Dvakrát na tento soubor klikněte v průzkumníku souborů (Windows / Mac / Linux).
+Otevře se v libovolném webovém prohlížeči (Google Chrome, Microsoft Edge,
+Mozilla Firefox, Safari) a ihned plně funguje včetně všech zvuků a ukládání!
+
+Tento soubor můžete zkopírovat na USB flash disk, poslat e-mailem nebo
+používat kdekoliv offline.
+
+--------------------------------------------------------------------
+MOŽNOST 2: VÝVOJÁŘSKÉ SPUŠTĚNÍ (NODE.JS)
+--------------------------------------------------------------------
+Pokud chcete kód dále upravovat ve vývojovém prostředí:
+
+1. Otevřete terminál ve složce projektu.
+2. Nainstalujte balíčky:
+     npm install
+3. Spusťte lokální server:
+     npm run dev
+4. V prohlížeči otevřete adresu http://localhost:3000
+
+Pro nové sestavení samostatného HTML souboru:
+     npm run build
+====================================================================
