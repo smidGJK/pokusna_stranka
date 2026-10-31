@@ -1,0 +1,6 @@
+{
+  "name": "PID Palubní informační LCD panel",
+  "description": "Simulátor vnitřního LCD panelu PID s konfigurací linky, zastávek, dojezdových časů a posunem na kliknutí.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
